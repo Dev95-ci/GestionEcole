@@ -14,9 +14,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-@_l(j_cb-9xdcq3_rgj$4xj=y!^re&&n^+rhp$p(ujwl@m_*=a'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+
+ALLOWED_HOSTS = ['railway.app']
+
 LOGIN_URL = '/accounts/connexion/'
 
 AUTH_USER_MODEL = 'utilisateurs.Utilisateur'
