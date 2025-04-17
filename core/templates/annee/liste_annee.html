@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert 
+                {% if message.tags == 'success' %}alert-success
+                {% elif message.tags == 'info' %}alert-info
+                {% elif message.tags == 'warning' %}alert-warning
+                {% elif message.tags == 'error' %}alert-danger
+                {% endif %} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+
+
+
+    <h1>Liste des années scolaires</h1>
+
+    <!-- Formulaire de recherche -->
+    <form method="GET" action="{% url 'liste_annees' %}" class="mb-3">
+        <input type="text" name="q" value="{{ query }}" placeholder="Rechercher par année scolaire..." class="form-control" />
+        <button type="submit" class="btn btn-primary mt-2">Rechercher</button>
+    </form>
+
+    <a href="{% url 'ajout_annee' %}" class="btn btn-success mb-3">Ajouter une nouvelle Annéé Scolaire</a>
+
+    <!-- Tableau des années scolaires -->
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Année scolaire</th>
+                <th>Date début</th>
+                <th>Date Fin</th>
+                <th>Est Active</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for annee in annees %}
+                <tr>
+                    <td>{{ annee.annee }}</td>
+                    <td>{{ annee.date_debut }}</td>
+                    <td>{{ annee.date_fin }}</td>
+                    <td>{{ annee.est_active }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

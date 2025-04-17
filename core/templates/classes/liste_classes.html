@@ -1,0 +1,58 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert 
+                {% if message.tags == 'success' %}alert-success
+                {% elif message.tags == 'info' %}alert-info
+                {% elif message.tags == 'warning' %}alert-warning
+                {% elif message.tags == 'error' %}alert-danger
+                {% endif %} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <h1>Liste des classes</h1>
+
+    <!-- Formulaire de recherche -->
+    <form method="GET" action="{% url 'liste_classes' %}" class="mb-3">
+        <input type="text" name="q" value="{{ query }}" placeholder="Rechercher par nom de classe..." class="form-control" />
+        <button type="submit" class="btn btn-primary mt-2">Rechercher</button>
+    </form>
+
+    <a href="{% url 'ajout_classe' %}" class="btn btn-success mb-3">Ajouter une nouvelle classe</a>
+
+    <!-- Tableau des classes -->
+    <div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nom de la Classe</th>
+                <th>Frais d'inscription</th>
+                <th>Frais de scolarite</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for classe in classes %}
+                <tr>
+                    <td>{{ classe.nom }}</td>
+                    <td>{{ classe.frais_inscription }}</td>
+                    <td>{{ classe.frais_scolaire }}</td>
+                    <td>
+                        <a href="{% url 'modifier_classe' classe.id %}" class="btn btn-secondary">✏️ Modifier</a> |
+                        <a href="{% url 'details_classe' classe.id %}" class="btn btn-primary">👁️ Voir</a> |
+                        <a href="{% url 'supprimer_classe' classe.id %}" onclick="return confirm('Supprimer cette classe ?')" class="btn btn-danger">❌ Supprimer</a> 
+                
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

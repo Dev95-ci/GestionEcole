@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Nouveau Paiement{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+{% for message in messages %}
+    <div class="alert 
+        {% if message.tags == 'success' %}alert-success
+        {% elif message.tags == 'info' %}alert-info
+        {% elif message.tags == 'warning' %}alert-warning
+        {% elif message.tags == 'error' %}alert-danger
+        {% endif %} alert-dismissible fade show" role="alert" id="message-alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+{% endfor %}
+{% endif %}
+
+<div class="container mt-5">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0">💰 Enregistrement d'un Paiement</h4>
+        </div>
+
+        
+        
+        <div class="card-body">
+            <form method="post" novalidate>
+                {% csrf_token %}
+
+                <div class="row">
+                    <!-- Inscription liée -->
+                    <div class="col-md-12 mb-3">
+                        <label for="inscription" class="form-label">Élève inscrit</label>
+                        <select class="form-select" name="inscription" id="inscription" required>
+                            <option value="">-- Sélectionner une inscription --</option>
+                            {% for item in inscriptions %}
+                                <option value="{{ item.id }}" {% if saisie.inscription == item.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ item.eleve.nom }} {{ item.eleve.prenom }} {{ item.eleve.matricule }} - {{ item.classe }} ({{ item.annee_scolaire }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Élève -->
+                    <div class="col-md-6 mb-3">
+                        <label for="eleve" class="form-label">Élève</label>
+                        <select class="form-select" name="eleve" id="eleve" required>
+                            <option value="">-- Sélectionner un élève --</option>
+                            {% for eleve in eleves %}
+                                <option value="{{ eleve.id }}" {% if saisie.eleve == eleve.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ eleve.nom }} {{ eleve.prenom }} {{ eleve.matricule }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div> 
+
+                    
+
+
+                    <!-- Type de paiement -->
+                    <div class="col-md-6 mb-3">
+                        <label for="type_paiement" class="form-label">Type de paiement</label>
+                        <select class="form-select" name="type_paiement" id="type_paiement" required>
+                            <option value="">-- Choisir le type --</option>
+                            <option value="inscription" {% if saisie.type_paiement == 'inscription' %}selected{% endif %}>Frais d'inscription</option>
+                            <option value="scolarite" {% if saisie.type_paiement == 'scolarite' %}selected{% endif %}>Frais de scolarité</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Montant -->
+                    <div class="col-md-6 mb-3">
+                        <label for="montant" class="form-label">Montant payé</label>
+                        <input type="number" class="form-control" name="montant" id="montant" required
+                               value="{{ saisie.montant|default:'' }}">
+                    </div>
+
+                    <!-- Date de paiement -->
+                    <div class="col-md-6 mb-3">
+                        <label for="date_paiement" class="form-label">Date de paiement</label>
+                        <input type="date" class="form-control" name="date_paiement" id="date_paiement" required
+                               value="{{ saisie.date_paiement|default:'' }}">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Année scolaire -->
+                    <div class="col-md-6 mb-3">
+                        <label for="annee_scolaire" class="form-label">Année scolaire</label>
+                        <select class="form-select" name="annee_scolaire" id="annee_scolaire" required>
+                            <option value="">-- Sélectionner une année --</option>
+                            {% for annee in annees %}
+                                <option value="{{ annee.id }}" {% if saisie.annee_scolaire == annee.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ annee.annee }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Statut -->
+                    <div class="col-md-6 mb-3">
+                        <label for="statut" class="form-label">Statut</label>
+                        <select class="form-select" name="statut" id="statut" required>
+                            <option value="True" {% if saisie.statut == 'True' %}selected{% endif %}>Payé</option>
+                            <option value="False" {% if saisie.statut == 'False' %}selected{% endif %}>Non payé</option>
+                        </select>
+                    </div>
+                </div>
+
+                <input type="hidden" name="enregistrer_paiement" value="1">
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-success">💾 Enregistrer le paiement</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Animation et redirection -->
+<script>
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'success' %}
+                const alertMessage = document.getElementById("message-alert");
+                alertMessage.classList.add("animate__animated", "animate__fadeOut");
+
+                setTimeout(function() {
+                    window.location.href = "{% url 'paiement' %}";  // Remplace par la bonne URL
+                }, 2000);
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    $('#id_eleve').change(function() {
+        let eleveId = $(this).val();
+        if (eleveId) {
+            $.ajax({
+                url: '/ajax/montant_restant/',
+                data: {
+                    'eleve_id': eleveId
+                },
+                success: function(data) {
+                    if (data.montant_restant !== undefined) {
+                        $('#montant_restant').text("Montant restant à payer : " + data.montant_restant + " FCFA");
+                    }
+                }
+            });
+        }
+    });
+});
+</script>
+
+    
+
+{% endblock %}

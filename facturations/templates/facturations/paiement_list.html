@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Liste des paiements{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h3>Liste des paiements effectués</h3>
+
+        <a href="{% url "paiement" %}" class="btn btn-primary" target="_blank">Effectuer un paiement</a>
+
+        <!-- Formulaire de filtrage par année scolaire -->
+        <form method="get" class="mb-4">
+            <label for="annee_scolaire" class="form-label">Filtrer par année scolaire</label>
+            <select name="annee_scolaire" id="annee_scolaire" class="form-select" onchange="this.form.submit()">
+                <option value="">-- Sélectionner une année scolaire --</option>
+                {% for annee in annees %}
+                    <option value="{{ annee.id }}" {% if annee.id == annee_scolaire_id %}selected{% endif %}>
+                        {{ annee.annee }}
+                    </option>
+                {% endfor %}
+            </select>
+        </form>
+
+        <!-- Section pour les paiements d'inscription -->
+        <div class="table-responsive">
+            <h4>Frais d'inscription</h4>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                       
+                        <th>Élève</th>
+                        <th>Montant payé</th>
+                        <th>Date de paiement</th>
+                        <th>Reçu</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for paiement in paiements_inscription %}
+                        <tr>
+                            
+                            <td>{{ paiement.eleve.nom }} {{ paiement.eleve.prenom }}</td>
+                            <td>{{ paiement.montant }} FCFA</td>
+                            <td>{{ paiement.date_paiement|date:"d/m/Y" }}</td>
+                            <td>
+                                {% if paiement.recu_pdf %}
+                                    <a href="{{ paiement.recu_pdf.url }}" class="btn btn-outline-primary" target="_blank">Télécharger le reçu</a>
+                                {% else %}
+                                    <span>Aucun reçu</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Section pour les paiements de scolarité -->
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        
+                        <th>Élève</th>
+                        <th>Classe</th>
+                        <th>Type de Paiement</th>
+                        <th>Montant</th>
+                        <th>Date</th>
+                        <th>Reçu</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for paiement in page_obj %}
+                        <tr>
+                            
+                            <td>{{ paiement.eleve.nom }}</td>
+                            <td>{{ paiement.eleve.classe.nom }}</td>
+                            <td>{{ paiement.get_type_paiement_display }}</td>
+                            <td>{{ paiement.montant }} €</td>
+                            <td>{{ paiement.date_paiement|date:"d/m/Y" }}</td>
+                            <td>
+                                {% if paiement.recu_pdf %}
+                                    <a href="{{ paiement.recu_pdf.url }}" class="btn btn-outline-primary" target="_blank">Télécharger le reçu</a>
+                                {% else %}
+                                    <span>Aucun reçu</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center">Aucun paiement trouvé</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Pagination -->
+        <nav>
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1&annee_scolaire={{ annee_scolaire_id }}" aria-label="Premier"><span aria-hidden="true">&laquo;&laquo;</span></a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}&annee_scolaire={{ annee_scolaire_id }}" aria-label="Précédent"><span aria-hidden="true">&laquo;</span></a>
+                    </li>
+                {% endif %}
+                <li class="page-item {% if page_obj.number == page_obj.paginator.num_pages %}active{% endif %}">
+                    <span class="page-link">Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}</span>
+                </li>
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}&annee_scolaire={{ annee_scolaire_id }}" aria-label="Suivant"><span aria-hidden="true">&raquo;</span></a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&annee_scolaire={{ annee_scolaire_id }}" aria-label="Dernier"><span aria-hidden="true">&raquo;&raquo;</span></a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+{% endblock %}

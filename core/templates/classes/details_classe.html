@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Détails de la classe {{ classe.nom }}</h1>
+    <p><strong>Frais de scolarité :</strong> {{ classe.frais_scolaire }} FCFA</p>
+    <p><strong>Frais d'inscription :</strong> {{ classe.frais_inscription }} FCFA</p>
+
+    <h2>Liste des élèves inscrits</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nom de l'élève</th>
+                <th>Date d'inscription</th>
+                <th>Paiements</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for inscription in inscriptions %}
+                <tr>
+                    <td>{{ inscription.eleve.nom }} {{ inscription.eleve.prenom }}</td>
+                    <td>{{ inscription.date_inscription }}</td>
+                    <td>
+                        {% if eleves_paiements %}
+                            <ul>
+                                {% for paiement in eleves_paiements %}
+                                    {% if paiement.eleve == inscription.eleve %}
+                                        <li>{{ paiement.montant }} FCFA - {{ paiement.date_paiement }} - {% if paiement.statut %}Payé{% else %}Non payé{% endif %}</li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>Aucun paiement enregistré.</p>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

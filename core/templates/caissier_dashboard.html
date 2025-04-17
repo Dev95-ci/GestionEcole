@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Tableau de bord - Caissier{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-primary">👨‍💼 Tableau de bord du Caissier</h2>
+        <p class="text-muted">Bienvenue sur votre interface de gestion rapide.</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Paiement -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-lg h-100">
+                <div class="card-body text-center">
+                    <div class="fs-1 text-primary mb-3">💰</div>
+                    <h5 class="card-title fw-bold">Saisir un Paiement</h5>
+                    <p class="text-muted">Enregistrer un nouveau paiement pour un élève.</p>
+                    <a href="{% url 'paiement' %}" class="btn btn-outline-primary w-100">Accéder</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inscriptions -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-lg h-100">
+                <div class="card-body text-center">
+                    <div class="fs-1 text-success mb-3">📝</div>
+                    <h5 class="card-title fw-bold">Nouvelle Inscription</h5>
+                    <p class="text-muted">Inscrire un élève dans une classe.</p>
+                    <a href="{% url 'inscription_form' %}" class="btn btn-outline-success w-100">Accéder</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Liste des paiements -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-lg h-100">
+                <div class="card-body text-center">
+                    <div class="fs-1 text-warning mb-3">📄</div>
+                    <h5 class="card-title fw-bold">Liste des Paiements</h5>
+                    <p class="text-muted">Voir tous les paiements enregistrés.</p>
+                    <a href="{% url 'paiement_list' %}" class="btn btn-outline-warning w-100">Consulter</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Liste des élèves -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-lg h-100">
+                <div class="card-body text-center">
+                    <div class="fs-1 text-info mb-3">🎓</div>
+                    <h5 class="card-title fw-bold">Liste des Élèves</h5>
+                    <p class="text-muted">Accéder à la liste des élèves inscrits.</p>
+                    <a href="{% url 'liste_eleves' %}" class="btn btn-outline-info w-100">Voir</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Déconnexion -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-lg h-100">
+                <div class="card-body text-center">
+                    <div class="fs-1 text-danger mb-3">🚪</div>
+                    <h5 class="card-title fw-bold">Déconnexion</h5>
+                    <p class="text-muted">Se déconnecter de la session actuelle.</p>
+                    <a href="{% url 'deconnexion' %}" class="btn btn-outline-danger w-100">Se déconnecter</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

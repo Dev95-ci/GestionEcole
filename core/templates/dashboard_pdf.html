@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: DejaVu Sans; font-size: 12px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px;}
+        th, td { border: 1px solid #000; padding: 8px; text-align: left; }
+    </style>
+</head>
+<body>
+    <h2>Dashboard - Répartition des élèves par classe</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Classe</th>
+                <th>Nombre d'élèves</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in inscriptions %}
+            <tr>
+                <td>{{ item.classe__nom }}</td>
+                <td>{{ item.total }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

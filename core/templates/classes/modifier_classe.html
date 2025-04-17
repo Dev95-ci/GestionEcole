@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Page de modification d'une classe{% endblock  %}
+
+{% block content %}
+
+    <div class="card">
+        
+
+        <form action="" method="post" class="card-body">
+            <h1 class="card-title">Modifier la classe {{ classe.nom | title }} </h1>
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-success">Modifier</button>
+        </form>
+    </div>
+
+{% endblock  %}

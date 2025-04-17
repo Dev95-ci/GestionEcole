@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Tableau de Bord - Gestion École{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+
+{% if user.is_authenticated %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        {% if user.role == 'admin' %}
+            <div class="col-md-3 col-lg-2 bg-dark text-white p-3 min-vh-100">
+                <h4 class="text-center">EPV ROVINESE KAPLEI</h4>
+                <p class="text-center">👤 Connecté : {{ user.username }} {{ user.role}}</p>
+                <a href="{% url 'dashboard' %}" class="text-white d-block py-2">📊 Dashboard</a>
+                <a href="{% url 'liste_eleves' %}" class="text-white d-block py-2">🎓 Élèves</a>
+                <a href="{% url 'liste_classes' %}" class="text-white d-block py-2">🎒 Classes</a>
+                <a href="{% url 'liste_annees' %}" class="text-white d-block py-2">📅 Années Scolaires</a>
+                <a class="nav-link text-white py-2" href="{% url 'inscription_form' %}">📆 Inscriptions</a>
+                <a href="{% url 'paiement_list' %}" class="text-white d-block py-2">💰 Paiements</a>
+                <a href="#" class="text-white d-block py-2">🧾 Factures</a>
+                <a href="#" class="text-white d-block py-2">👥 Utilisateurs</a>
+                <a href="{% url 'deconnexion' %}" class="text-white d-block py-2">🚪 Déconnexion</a>
+            </div>
+
+        {% elif user.role == 'caissier' %}
+
+
+            <div class="col-md-3 col-lg-2 bg-dark text-white p-3 min-vh-100">
+                <h4 class="text-center">EPV ROVINESE KAPLEI</h4>
+                <p class="text-center">👤 Connecté : {{ user.username | upper }} {{ user.role}}</p>
+                <a href="{% url 'caissier_dashboard' %}" class="text-white d-block py-2">📊 Dashboard</a>
+                <a href="{% url 'liste_eleves' %}" class="text-white d-block py-2">🎓 Élèves</a>
+                <a href="{% url 'inscription_form' %}" class="text-white d-block py-2">📆 Inscriptions</a>
+                <a href="{% url 'paiement' %}" class="text-white d-block py-2">💰 Paiements</a>
+                
+            </div>
+
+
+        {% endif %}
+    
+        
+        <!-- Main Content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            {% block content %}{% endblock  %}
+        </main>
+    </div>
+</div>
+{% comment %} {% else %}
+
+<div class="container mt-5">
+    <div class="alert alert-warning text-center">
+        Vous devez être connecté pour accéder au tableau de bord. <a href="{% url 'connexion' %}">Se connecter</a>
+    </div>
+</div> {% endcomment %}
+
+{% endif %}
+
+<!-- Alertes -->
+<script>
+    setTimeout(function() {
+        let alerts = document.querySelectorAll(".alert");
+        alerts.forEach(alert => {
+            alert.classList.add("fade-out");
+            setTimeout(() => alert.remove(), 500);
+        });
+    }, 4000);
+</script>
+
+<!-- Table Data -->
+<script>
+    $(document).ready(function() {
+        $('#elevesTable').DataTable({
+            "paging": false,
+            "language": {
+                "search": "🔍 Rechercher :",
+                "lengthMenu": "Afficher _MENU_ élèves par page",
+                "zeroRecords": "Aucun élève trouvé",
+                "info": "Page _PAGE_ sur _PAGES_",
+                "infoEmpty": "Aucune donnée disponible",
+                "infoFiltered": "(filtré sur _MAX_ élèves au total)",
+                "paginate": {
+                    "next": "Suivant",
+                    "previous": "Précédent"
+                }
+            }
+        });
+    });
+</script>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>

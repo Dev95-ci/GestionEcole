@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Nouvelle Inscription{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+{% for message in messages %}
+    <div class="alert 
+        {% if message.tags == 'success' %}alert-success
+        {% elif message.tags == 'info' %}alert-info
+        {% elif message.tags == 'warning' %}alert-warning
+        {% elif message.tags == 'error' %}alert-danger
+        {% endif %} alert-dismissible fade show" role="alert" id="message-alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+{% endfor %}
+{% endif %}
+
+<div class="container mt-5">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">📋 Formulaire d'inscription</h4>
+        </div>
+        <div class="card-body">
+            <form method="post" novalidate>
+                {% csrf_token %}
+
+                <div class="row">
+                    <!-- Nom de l'élève -->
+                    <div class="col-md-6 mb-3">
+                        <label for="nom" class="form-label">Nom de l'élève</label>
+                        <input type="text" class="form-control" name="nom" id="nom" required
+                               value="{{ saisie.nom|default:'' }}">
+                    </div>
+
+                    <!-- Prénom de l'élève -->
+                    <div class="col-md-6 mb-3">
+                        <label for="prenom" class="form-label">Prénom de l'élève</label>
+                        <input type="text" class="form-control" name="prenom" id="prenom" required
+                               value="{{ saisie.prenom|default:'' }}">
+                    </div>
+
+                    <!-- Date de naissance -->
+                    <div class="col-md-6 mb-3">
+                        <label for="date_naissance" class="form-label">Date de naissance de l'élève</label>
+                        <input type="date" class="form-control" name="date_naissance" id="date_naissance" required
+                               value="{{ saisie.date_naissance|default:'' }}">
+                    </div>
+
+                    <!-- Téléphone d'un parent -->
+                    <div class="col-md-6 mb-3">
+                        <label for="phone" class="form-label">Téléphone d'un parent</label>
+                        <input type="text" class="form-control" name="phone" id="phone" required
+                               value="{{ saisie.phone|default:'' }}">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Classe -->
+                    <div class="col-md-6 mb-3">
+                        <label for="classe" class="form-label">Classe</label>
+                        <select class="form-select" name="classe" id="classe" required>
+                            <option value="">-- Sélectionner une classe --</option>
+                            {% for classe in classes %}
+                                <option value="{{ classe.id }}" {% if saisie.classe == classe.id|stringformat:"s" %}selected{% endif %}>{{ classe.nom }} - Frais inscription {{ classe.frais_inscription }} </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Année scolaire -->
+                    <div class="col-md-6 mb-3">
+                        <label for="annee_scolaire" class="form-label">Année scolaire</label>
+                        <select class="form-select" name="annee_scolaire" id="annee_scolaire" required>
+                            <option value="">-- Sélectionner une année --</option>
+                            {% for annee in annees %}
+                                <option value="{{ annee.id }}" {% if saisie.annee_scolaire == annee.id|stringformat:"s" %}selected{% endif %}>{{ annee.annee }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <!-- Informations sur le paiement -->
+                <div class="">
+                    💡 <strong>Note :</strong> Le paiement des frais d'inscription est <strong>obligatoire</strong>.
+                </div>
+
+                <div class="row">
+                    <!-- Montant payé -->
+                    <div class="col-md-6 mb-3">
+                        <label for="montant_paye" class="form-label">Montant payé (frais d'inscription)</label>
+                        <input type="number" class="form-control" name="montant_paye" id="montant_paye" required
+                               value="{{ saisie.montant_paye|default:'' }}">
+                    </div>
+
+                    <!-- Date de paiement -->
+                    <div class="col-md-6 mb-3">
+                        <label for="date_paiement" class="form-label">Date de paiement</label>
+                        <input type="date" class="form-control" name="date_paiement" id="date_paiement" required
+                               value="{{ saisie.date_paiement|default:'' }}">
+                    </div>
+                </div>
+
+                <input type="hidden" name="payer_frais_inscription" value="1">
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">✅ Valider l'inscription</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Animation et redirection -->
+<script>
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'success' %}
+                // Animation du message de succès
+                const alertMessage = document.getElementById("message-alert");
+                alertMessage.classList.add("animate__animated", "animate__fadeOut");
+                
+                // Redirection après un délai
+                setTimeout(function() {
+                    window.location.href = "{% url 'inscription_success' %}"; // Remplace par ton URL de succès
+                }, 2000); // 2 secondes pour laisser l'utilisateur voir l'alerte
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+</script>
+
+{% endblock %}

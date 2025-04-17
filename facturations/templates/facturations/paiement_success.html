@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Paiement effectué avec succès{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+{% for message in messages %}
+    <div class="alert 
+        {% if message.tags == 'success' %}alert-success
+        {% elif message.tags == 'info' %}alert-info
+        {% elif message.tags == 'warning' %}alert-warning
+        {% elif message.tags == 'error' %}alert-danger
+        {% endif %} alert-dismissible fade show" role="alert" id="message-alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+{% endfor %}
+{% endif %}
+
+    <div class="container mt-5">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">✅ Paiement effectué avec succès</h4>
+            </div>
+            <div class="card-body">
+                <p>Félicitations ! Votre paiement a été effectué avec succès.</p>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Élève :</h5>
+                        <p><strong>Matricule :</strong> {{ eleve.matricule }} </p>
+                        <p><strong>Nom :</strong> {{ eleve.nom }} {{ eleve.prenom }}</p>
+                        <p><strong>Classe :</strong> {{ paiement.inscription.classe.nom }}</p>
+                        <p><strong>Année scolaire :</strong> {{ paiement.annee_scolaire.annee }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Détails du paiement :</h5>
+                        <p><strong>Montant payé :</strong> {{ paiement.montant }} FCFA</p>
+                        <p><strong>Date de paiement :</strong> {{ paiement.date_paiement }}</p>
+                        <p><strong>Type de paiement :</strong> {{ paiement.get_type_paiement_display }}</p>
+                        {% if paiement.recu_pdf %}
+                            <p><a href="{{ paiement.recu_pdf.url }}" class="btn btn-info" target="_blank">Télécharger le reçu</a></p>
+                        {% else %}
+                            <p>Le reçu n'est pas disponible pour ce paiement.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <hr class="my-4">
+                
+                <div class="d-grid">
+                    <a href="{% url 'paiement' %}" class="btn btn-primary">Effectuer un autre paiement</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

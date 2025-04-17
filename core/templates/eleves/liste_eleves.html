@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert 
+                {% if message.tags == 'success' %}alert-success
+                {% elif message.tags == 'info' %}alert-info
+                {% elif message.tags == 'warning' %}alert-warning
+                {% elif message.tags == 'error' %}alert-danger
+                {% endif %} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+    <h1>Liste des élèves</h1>
+
+    <!-- Formulaire de recherche -->
+    <form method="GET" action="{% url 'liste_eleves' %}" class="mb-3">
+        <input type="text" name="q" value="{{ query }}" placeholder="Rechercher par nom, prénom, classe..." class="form-control" />
+        <button type="submit" class="btn btn-primary mt-2">Rechercher</button>
+    </form>
+
+    <!-- Tableau des élèves -->
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Matricule</th>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Date Naissance</th>
+                    <th>Téléphone</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for eleve in page_obj %}
+                    <tr>
+                        <td>{{ eleve.matricule }}</td>
+                        <td>{{ eleve.nom }}</td>
+                        <td>{{ eleve.prenom }}</td>
+                        <td>{{ eleve.date_naissance }}</td>
+                        <td>{{ eleve.telephone }}</td>
+                        <td>
+                            {% if user.role == 'admin' %}
+                                <a href="{% url 'modifier_eleve' eleve.id %}" class="btn btn-secondary">✏️ Modifier</a> 
+                            {% endif %}
+                            <a href="{% url 'details_eleve' eleve.id %}" class="btn btn-primary">👁️ Voir</a> 
+                            {% comment %} <a href="{% url 'supprimer_eleve' eleve.id %}" onclick="return confirm('Supprimer cette élève ?')" class="btn btn-danger">❌ Supprimer</a>  {% endcomment %}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6">Aucun élève trouvé.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?q={{ query }}&page=1">&laquo; Première</a>
+                <a href="?q={{ query }}&page={{ page_obj.previous_page_number }}">Précédente</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?q={{ query }}&page={{ page_obj.next_page_number }}">Suivante</a>
+                <a href="?q={{ query }}&page={{ page_obj.paginator.num_pages }}">Dernière &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,302 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-primary">👨‍💼 Tableau de bord de l'administrateur</h2>
+        <p class="text-muted">Bienvenue sur votre interface de gestion rapide.</p>
+    </div>
+
+    <!-- Liens rapides -->
+    <div class="mb-4 d-flex gap-3 flex-wrap">
+        <a href="{% url 'liste_eleves' %}" class="btn btn-outline-primary">👨‍🎓 Élèves</a>
+        <a href="{% url "inscription_form" %}" class="btn btn-outline-secondary">📚 Inscriptions</a>
+        <a href="{% url "paiement" %}" class="btn btn-outline-success">💰 Paiements</a>
+    </div>
+
+    <!-- Filtres -->
+    <form method="get" class="row g-3 mb-4">
+        <div class="col-md-4">
+            <label for="annee" class="form-label">Année scolaire</label>
+            <select name="annee" id="annee" class="form-select">
+                <option value="">Toutes</option>
+                {% for annee in annees %}
+                    <option value="{{ annee.id }}" {% if annee.id|stringformat:"s" == selected_annee %}selected{% endif %}>
+                        {{ annee.annee }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label for="classe" class="form-label">Classe</label>
+            <select name="classe" id="classe" class="form-select">
+                <option value="">Toutes</option>
+                {% for c in classes %}
+                    <option value="{{ c.id }}" {% if c.id|stringformat:"s" == selected_classe %}selected{% endif %}>
+                        {{ c.nom }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">Filtrer</button>
+        </div>
+    </form>
+
+    <!-- Exporter les données -->
+    <div class="d-flex justify-content-end mb-3 gap-2">
+        <a href="{% url 'dashboard_export_pdf' %}" class="btn btn-danger">📄 Export PDF</a>
+        <a href="{% url 'dashboard_export_excel' %}" class="btn btn-success">📊 Export Excel</a>
+    </div>
+
+    <!-- Résumé des données -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Élèves</h5>
+                    <p class="card-text fs-3">{{ total_eleves }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Classes</h5>
+                    <p class="card-text fs-3">{{ total_classes }}</p>
+                </div>
+            </div>
+        </div>
+        {% comment %} 
+        <div class="col-md-4">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Paiements</h5>
+                    <p class="card-text fs-3">{{ total_paiements }} FCFA</p>
+                </div>
+            </div>
+        </div> 
+        {% endcomment %}
+    </div>
+
+    <!-- Totaux des frais -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Total des frais d'inscription</h5>
+                </div>
+                <div class="card-body">
+                    <h3 class="text-center">{{ total_frais_inscription|floatformat:2 }} FCFA</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Total des frais de scolarité</h5>
+                </div>
+                <div class="card-body">
+                    <h3 class="text-center">{{ total_frais_scolarite|floatformat:2 }} FCFA</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Total des paiements effectués</h5>
+                </div>
+                <div class="card-body">
+                    <h3 class="text-center">{{ total_paiements|floatformat:2 }} FCFA</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Graphiques -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Nombre d'élèves par classe</div>
+                <div class="card-body">
+                    <canvas id="chartElevesClasse"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Paiements par mois</div>
+                <div class="card-body">
+                    <canvas id="chartPaiementsMois"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% comment %} <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Paiements et Restants par Classe</h5>
+                </div>
+                <div class="card-body table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Classe</th>
+                                <th>Montant Payé (FCFA)</th>
+                                <th>Montant Total à Payer (FCFA)</th>
+                                <th>Montant Restant (FCFA)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for classe in paiements_par_classe %}
+                                <tr>
+                                    <td>{{ classe.nom }}</td>
+                                    <td>{{ classe.total_paye|default:0|floatformat:2 }}</td>
+                                    <td>{{ classe.total_frais|default:0|floatformat:2 }}</td>
+                                    <td>{{ classe.total_restant|default:0|floatformat:2 }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center">Aucune donnée disponible</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div> {% endcomment %}
+    
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">Répartition des élèves par année scolaire</div>
+                <div class="card-body">
+                    <canvas id="chartElevesAnnee"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Graphiques supplémentaires -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Répartition des élèves (Doughnut)</div>
+                <div class="card-body">
+                    <canvas id="chartDoughnut"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Inscriptions par classe (Radar)</div>
+                <div class="card-body">
+                    <canvas id="chartRadar"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const chartDataClasses = {{ chart_data_classes|safe }};
+    const chartDataPaiements = {{ chart_data_paiements|safe }};
+    const chartDataAnnees = {{ chart_data_annees|safe }};
+
+    // Élèves par classe
+    new Chart(document.getElementById('chartElevesClasse'), {
+        type: 'bar',
+        data: {
+            labels: chartDataClasses.map(item => item.label),
+            datasets: [{
+                label: 'Élèves',
+                data: chartDataClasses.map(item => item.value),
+                backgroundColor: '#007bff',
+                borderColor: '#0056b3',
+                borderWidth: 1
+            }]
+        },
+        options: { responsive: true, scales: { y: { beginAtZero: true } } }
+    });
+
+    // Paiements par mois
+    new Chart(document.getElementById('chartPaiementsMois'), {
+        type: 'line',
+        data: {
+            labels: chartDataPaiements.map(item => item.label),
+            datasets: [{
+                label: 'Montants payés',
+                data: chartDataPaiements.map(item => item.value),
+                borderColor: '#28a745',
+                fill: false,
+                tension: 0.3
+            }]
+        },
+        options: { responsive: true }
+    });
+
+    // Élèves par année scolaire
+    new Chart(document.getElementById('chartElevesAnnee'), {
+        type: 'pie',
+        data: {
+            labels: chartDataAnnees.map(item => item.label),
+            datasets: [{
+                data: chartDataAnnees.map(item => item.value),
+                backgroundColor: ['#dc3545', '#ffc107', '#17a2b8', '#28a745']
+            }]
+        },
+        options: { responsive: true }
+    });
+
+    // Doughnut
+    const doughnutCtx = document.getElementById('chartDoughnut').getContext('2d');
+    new Chart(doughnutCtx, {
+        type: 'doughnut',
+        data: {
+            labels: [{% for item in chart_data_classes %}"{{ item.label }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
+            datasets: [{
+                data: [{% for item in chart_data_classes %}{{ item.value }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+                backgroundColor: ['#dc3545', '#007bff', '#ffc107', '#17a2b8', '#28a745'],
+            }]
+        },
+        options: {
+            responsive: true
+        }
+    });
+
+    // Radar
+    const radarCtx = document.getElementById('chartRadar').getContext('2d');
+    new Chart(radarCtx, {
+        type: 'radar',
+        data: {
+            labels: [{% for item in chart_data_classes %}"{{ item.label }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
+            datasets: [{
+                label: 'Inscriptions',
+                data: [{% for item in chart_data_classes %}{{ item.value }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+                backgroundColor: 'rgba(0, 123, 255, 0.2)',
+                borderColor: '#007bff',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                r: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

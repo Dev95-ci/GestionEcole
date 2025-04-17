@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if messages %}
+{% for message in messages %}
+    <div class="alert 
+        {% if message.tags == 'success' %}alert-success
+        {% elif message.tags == 'info' %}alert-info
+        {% elif message.tags == 'warning' %}alert-warning
+        {% elif message.tags == 'error' %}alert-danger
+        {% endif %} alert-dismissible fade show" role="alert" id="message-alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+{% endfor %}
+{% endif %}
+
+  <div class="container text-center mt-5">
+    <h2>✅ Inscription réussie !</h2>
+    <p>L'élève a été inscrit avec succès.</p>
+    <a href="{% url 'inscription_form' %}" class="btn btn-primary mt-3">Faire une autre inscription</a>
+  </div>
+{% endblock %}
