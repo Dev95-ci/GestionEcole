@@ -78,9 +78,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'gestion_ecole_rovinese',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
+        'USER': 'dev95',
+        'PASSWORD': '1234',
+        'HOST': 'containers-us-west-123.railway.app',
         'PORT': '3306',
         'OPTIONS': {
             'charset': 'utf8mb4',
