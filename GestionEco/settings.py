@@ -77,10 +77,10 @@ WSGI_APPLICATION = 'GestionEco.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'dev95$gestion_ecole_rovinese',
-        'USER': 'dev95',
-        'PASSWORD': 'dev9560',
-        'HOST': 'dev95.mysql.pythonanywhere-services.com',
+        'NAME': 'GestionEco$gestion_ecole_rovinese',
+        'USER': 'GestionEco',
+        'PASSWORD': 'rovinese',
+        'HOST': 'GestionEco.mysql.pythonanywhere-services.com',
         'PORT': '3306',
         'OPTIONS': {
             'charset': 'utf8mb4',
