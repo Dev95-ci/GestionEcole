@@ -14,10 +14,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-@_l(j_cb-9xdcq3_rgj$4xj=y!^re&&n^+rhp$p(ujwl@m_*=a'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['dev95.pythonanywhere.com']
 
 LOGIN_URL = '/accounts/connexion/'
 
@@ -77,10 +77,10 @@ WSGI_APPLICATION = 'GestionEco.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'gestion_ecole_rovinese',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
+        'NAME': 'dev95$gestion_ecole_rovinese',
+        'USER': 'dev95',
+        'PASSWORD': 'dev9560',
+        'HOST': 'dev95.mysql.pythonanywhere-services.com',
         'PORT': '3306',
         'OPTIONS': {
             'charset': 'utf8mb4',
