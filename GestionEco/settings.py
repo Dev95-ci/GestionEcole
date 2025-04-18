@@ -14,10 +14,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-@_l(j_cb-9xdcq3_rgj$4xj=y!^re&&n^+rhp$p(ujwl@m_*=a'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 
-ALLOWED_HOSTS = ['railway.app']
+ALLOWED_HOSTS = []
 
 LOGIN_URL = '/accounts/connexion/'
 
@@ -78,9 +78,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'gestion_ecole_rovinese',
-        'USER': 'dev95',
-        'PASSWORD': '1234',
-        'HOST': 'containers-us-west-123.railway.app',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'localhost',
         'PORT': '3306',
         'OPTIONS': {
             'charset': 'utf8mb4',
